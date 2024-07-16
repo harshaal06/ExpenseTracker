@@ -4,9 +4,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import { postLogin, postSignup } from './controllers/user.js';
+import { deleteTransaction, getTransactions, postTransaction } from './controllers/transaction.js';
+
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 
 const connectDB = async () =>{
   const conn = await mongoose.connect(process.env.MONGODB_URL)
@@ -23,6 +27,14 @@ app.get('/', (req, res) => {
     message: `Welcome to Expense Tracker API`
   })
 })
+
+app.post("/signup", postSignup)
+app.post("/login", postLogin)
+
+app.post("/transaction", postTransaction)
+app.get("/transactions", getTransactions)
+app.delete("/transaction/:id", deleteTransaction)
+
 
 const PORT = process.env.PORT || 5000;
 
