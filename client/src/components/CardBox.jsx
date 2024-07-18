@@ -31,7 +31,7 @@ export default function CardBox() {
         }
     ]
     return (
-        <div ref={ref} className='fixed top-0 p-5 left-0 z-[3] w-full h-full flex gap-10 flex-wrap'>
+        <div ref={ref} className='fixed top-0 p-5 pt-28 left-0 z-[3] w-full h-full flex gap-10 flex-wrap'>
             {data.map((item, index)=>(
                 <Card data={item} reference={ref} />
             ))}

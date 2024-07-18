@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*{
+    font-family: sans-serif;
+}
+
+.card-box::-webkit-scrollbar{
+    width: 3px;
+}
+.card-box::-webkit-scrollbar-track {
+    background-color: #ababab;
+    border-radius: 100px;
+}
+.card-box::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    background-color: #dc2626;
+}
