@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ExpenseCard from '../components/ExpenseCard';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { MyContext } from '../components/MyContext';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
 
-  const [user, setUser] = useState([]);
+  const { user, setUser } = useContext(MyContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const response = JSON.parse(localStorage.getItem('user'));
-    if (response) {
-      setUser(response);
-    }
+
     if (!response) {
-      window.location.href = `/`
+      toast.error("Login First")
+      navigate('/')
     }
   }, [])
 
@@ -35,7 +37,7 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    loadTransactions()
+    loadTransactions();
   }, [user])
 
   useEffect(() => {
@@ -61,6 +63,10 @@ function Dashboard() {
   const [description, setDescription] = useState('');
   const [type, setType] = useState('');
   const addTransaction = async () => {
+    if (!(title && amount && type)) {
+      toast.error('All information required.');
+      return;
+    }
     const response = await axios.post(`${process.env.REACT_APP_API_URL}/transaction`, {
       title,
       amount,
@@ -69,22 +75,26 @@ function Dashboard() {
       category,
       user: user._id
     })
+    if (!response.data.success) {
+      toast.error(response.data.message);
+    }
+    else {
+      toast.success(response.data.message)
 
-    toast.success(response.data.message)
+      setTitle('')
+      setAmount()
+      setType('')
+      setCategory('')
 
-    setTitle('')
-    setAmount()
-    setType('')
-    setCategory('')
-
-    loadTransactions()
+      loadTransactions()
+    }
   }
 
   return (
     <div className='w-full h-screen bg-[#282c34] pt-3'>
       <div className='absolute top-1/2 left-1/2 w-4/5 h-4/5 bg-zinc-900 rounded-3xl shadow-2xl -translate-x-[50%] -translate-y-[50%] p-5 flex gap-5'>
         <div className='text-white w-1/3 tracking-tighter '>
-          <h1 className='text-5xl mt-3 font-serif text-center'>नमस्ते 🙏</h1>
+          <h1 className='text-4xl mt-3 tracking-tight'>ExpenseEase</h1>
           <div className='bg-zinc-400 text-black p-5 rounded-3xl shadow-lg mt-4'>
             <p className='text-lg tracking-normal '>Balance:</p>
             <h3 className='text-4xl font-semibold font-sans'>₹ {netIncome - netExpense}</h3>
@@ -101,7 +111,7 @@ function Dashboard() {
           </div>
           <div className='mt-3'>
             <h3 className='text-2xl tracking-normal font-semibold text-zinc-400'>Breakdown</h3>
-            <div className='h-[210px] overflow-y-scroll card-box'>
+            <div className='h-[215px] overflow-y-scroll card-box'>
               {
                 transactions.map((transaction) => {
                   const { _id, title, amount, category, description, type, createdAt } = transaction
@@ -117,6 +127,7 @@ function Dashboard() {
           <div className='bg-zinc-900 h-1/3 rounded-3xl pt-7'>
             <h1 className='text-5xl text-center'>Hello, {user.fullName}</h1>
             <button onClick={() => {
+              setUser([]);
               localStorage.removeItem('user');
               toast.success("User sign out successfully");
               setTimeout(() => {
