@@ -77,23 +77,23 @@ const postLogin = async (req, res) => {
             })
         }
 
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
+        // const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
 
-        const {password: pass, ...rest} = user._doc
+        // const {password: pass, ...rest} = user._doc
 
-        res.cookie("access_token", token, {httpOnly: true}).status(200).json({
-            success: true,
-            message: "User Login successful",
-            data: rest
-        })
+        // res.cookie("access_token", token, {httpOnly: true}).status(200).json({
+        //     success: true,
+        //     message: "User Login successful",
+        //     data: rest
+        // })
 
-        // if (user) {
-        //     return res.json({
-        //         success: true,
-        //         message: "User Login successful",
-        //         data: user
-        //     })
-        // }
+        if (user) {
+            return res.json({
+                success: true,
+                message: "User Login successful",
+                data: user
+            })
+        }
     } catch (e) {
         res.json({
             success: false,

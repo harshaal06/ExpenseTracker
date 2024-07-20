@@ -89,7 +89,7 @@ function Login({ onClose }) {
                 <button onClick={onClose} className='place-self-end me-4'><RxCross1 className='text-white' size={30} /></button>
                 <div className='bg-zinc-900 py-5 px-7 rounded-lg border border-green-700 mx-4 text-zinc-500'>
                     {activeComponent === "Login" && (
-                        <div className='w-80'>
+                        <div className='w-10/12 md:w-80'>
                             <h1 className='text-center font-semibold text-4xl leading-none tracking-tighter text-gray-300'>Log in</h1>
                             <p className='text-sm text-center mt-2'>Don't have an account? <span className='text-gray-400 cursor-pointer font-semibold' onClick={() => handleSetActiveComponent('SignUp')}>SignUp</span></p>
                             <form class="mt-6 text-gray-400">
@@ -130,7 +130,7 @@ function Login({ onClose }) {
                         </div>
                     )}
                     {activeComponent === "SignUp" && (
-                        <div className='w-80'>
+                        <div className='w-10/12 md:w-80'>
                             <h1 className='text-center font-semibold text-4xl leading-none tracking-tighter text-gray-300'>Sign Up</h1>
                             <p className='text-sm text-center mt-2'>Already have an account? <span className='text-gray-400 cursor-pointer font-semibold' onClick={() => handleSetActiveComponent('Login')}>Login</span></p>
                             <form class="mt-5 text-gray-400">
