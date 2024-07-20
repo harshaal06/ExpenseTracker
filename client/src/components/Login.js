@@ -87,7 +87,7 @@ function Login({ onClose }) {
         <div ref={modalRef} onClick={closeModal} className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center'>
             <div className='flex flex-col gap-3 -mt-8'>
                 <button onClick={onClose} className='place-self-end me-4'><RxCross1 className='text-white' size={30} /></button>
-                <div className='bg-zinc-900 py-5 px-7 rounded-lg border border-green-700 mx-6 text-zinc-500'>
+                <div className='bg-zinc-900 py-5 px-7 rounded-lg border border-green-700 mx-4 text-zinc-500'>
                     {activeComponent === "Login" && (
                         <div className='w-80'>
                             <h1 className='text-center font-semibold text-4xl leading-none tracking-tighter text-gray-300'>Log in</h1>
