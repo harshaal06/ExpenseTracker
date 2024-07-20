@@ -25,7 +25,7 @@ const connectDB = async () =>{
 connectDB();
 
 
-app.get('/', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({
     success: true,
     message: `Welcome to Expense Tracker API`

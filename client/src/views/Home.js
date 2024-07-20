@@ -23,7 +23,7 @@ function Home() {
     
     const loadUser = async () => {
         toast.loading('Please wait 50 seconds for server start.');
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/health`);
 
         toast.dismiss();
         if(response.data.success){
@@ -72,7 +72,7 @@ function Home() {
             </div>
             <div className='absolute top-1/3 left-1/2 w-4/5 -translate-x-[50%] -translate-y-[50%] text-center'>
                 <motion.h1 variants={motionAni(0.2)} initial="hidden" animate='visible' className='text-5xl md:text-[75px] leading-none tracking-tighter font-semibold text-blck'>Track, manage, save, thrive</motion.h1>
-                <motion.h2 variants={motionAni(0.4)} initial="hidden" animate='visible' className='mt-3 text-center opacity-85 text-xl text-[27px] font-semibold leading-6 tracking-normal text-black'>Transform your financial habits<br />with BudgetBuddy's intuitive expense tracker.</motion.h2>
+                <motion.h2 variants={motionAni(0.4)} initial="hidden" animate='visible' className='mt-3 text-center opacity-85 text-xl text-[27px] font-semibold leading-6 tracking-normal text-black'>Transform your financial habits<br />with ExpenseEase intuitive expense tracker.</motion.h2>
                 <motion.button variants={motionAni(0.5)} initial="hidden" animate='visible' className='mt-8 border-2 border-green-700 text-zinc-300 py-2 px-5 font-semibold rounded-lg hover:bg-[#343942]' 
                     onClick={() => !user ? setShowLogin(true) : navigate('/dashboard')}>Connect with ExpenseEase <GrFormNextLink className='inline' size="1.5em"/>
                 </motion.button>
