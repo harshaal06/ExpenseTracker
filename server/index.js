@@ -1,14 +1,17 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 dotenv.config();
 
 import { postLogin, postSignup } from './controllers/user.js';
 import { deleteTransaction, getTransactions, postTransaction } from './controllers/transaction.js';
+import { verifyToken } from './utils/verifyUser.js';
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
 
 
@@ -24,6 +27,7 @@ connectDB();
 
 app.get('/', (req, res) => {
   res.json({
+    success: true,
     message: `Welcome to Expense Tracker API`
   })
 })

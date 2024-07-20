@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { MyContext } from '../components/MyContext';
 import { useNavigate } from 'react-router-dom';
+import { MdTitle, MdOutlineCategory, MdNotes } from "react-icons/md";
+import { RiMoneyRupeeCircleLine, RiContractUpDownLine } from "react-icons/ri";
 
 function Dashboard() {
 
@@ -82,7 +84,7 @@ function Dashboard() {
       toast.success(response.data.message)
 
       setTitle('')
-      setAmount()
+      setAmount('')
       setType('')
       setCategory('')
 
@@ -91,9 +93,9 @@ function Dashboard() {
   }
 
   return (
-    <div className='w-full h-screen bg-[#282c34] pt-3'>
-      <div className='absolute top-1/2 left-1/2 w-4/5 h-4/5 bg-zinc-900 rounded-3xl shadow-2xl -translate-x-[50%] -translate-y-[50%] p-5 flex gap-5'>
-        <div className='text-white w-1/3 tracking-tighter '>
+    <div className='w-full h-full md:h-screen bg-[#282c34] py-3'>
+      <div className='md:absolute md:top-1/2 md:left-1/2 w-96 mx-auto md:mx-0 md:w-4/5 h-auto md:h-4/5 bg-zinc-900 rounded-3xl shadow-2xl md:-translate-x-[50%] md:-translate-y-[50%] p-5 flex flex-wrap md:flex-nowrap gap-5'>
+        <div className='text-white w-full md:w-1/3 tracking-tighter '>
           <h1 className='text-4xl mt-3 tracking-tight'>ExpenseEase</h1>
           <div className='bg-zinc-400 text-black p-5 rounded-3xl shadow-lg mt-4'>
             <p className='text-lg tracking-normal '>Balance:</p>
@@ -123,20 +125,22 @@ function Dashboard() {
             </div>
           </div>
         </div>
-        <div className='w-2/3 bg-zinc-800 rounded-3xl p-4 text-white'>
-          <div className='bg-zinc-900 h-1/3 rounded-3xl pt-7'>
-            <h1 className='text-5xl text-center'>Hello, {user.fullName}</h1>
-            <button onClick={() => {
-              setUser([]);
-              localStorage.removeItem('user');
-              toast.success("User sign out successfully");
-              setTimeout(() => {
-                window.location.href = `/`
-              }, 1000);
-            }} className='bg-red-600 text-white py-2 px-10 mx-auto block mt-6 font-semibold rounded-xl hover:bg-red-500'>Sign Out</button>
+        <div className='w-full md:w-2/3 bg-zinc-800 rounded-3xl p-4 text-white'>
+          <div className='bg-zinc-900 h-auto md:h-1/3 rounded-3xl flex justify-center items-center'>
+            <div className='p-4'><h1 className='text-2xl md:text-5xl text-center'>Hello, {user.fullName}</h1>
+              <button onClick={() => {
+                setUser([]);
+                localStorage.removeItem('user');
+                toast.success("User sign out successfully");
+                setTimeout(() => {
+                  window.location.href = `/`
+                }, 1000);
+              }} className='bg-red-600 text-white py-1 md:py-2 px-5 md:px-10 mx-auto block mt-3 md:mt-5 md:font-semibold text-sm rounded-lg hover:bg-red-500'>Sign Out</button>
+            </div>
           </div>
-          <div className='w-2/3 mx-auto p-5 mt-6'>
-            <div className='w-full'>
+          <div className='md:w-2/3 mx-auto p-2 md:p-5 md:mt-6 space-y-4'>
+            <div className='w-full flex items-center gap-1'>
+              <MdTitle size='1.7em' />
               <input
                 class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
                 type="text"
@@ -147,8 +151,9 @@ function Dashboard() {
                 }}
               />
             </div>
-            <div className='w-full flex gap-4 mt-4'>
-              <div className='w-1/2'>
+            <div className='w-full flex gap-4 md:mt-4'>
+              <div className='w-1/2 flex items-center gap-1'>
+                <RiMoneyRupeeCircleLine size='1.7em' />
                 <input
                   class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-zinc-200"
                   type="number"
@@ -159,7 +164,8 @@ function Dashboard() {
                   }}
                 />
               </div>
-              <div className='w-1/2'>
+              <div className='w-1/2 flex items-center gap-1'>
+                <MdOutlineCategory size='1.7em' />
                 <input
                   class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-zinc-200"
                   type="text"
@@ -171,7 +177,8 @@ function Dashboard() {
                 />
               </div>
             </div>
-            <div className='w-full mt-4'>
+            <div className='w-full md:mt-4 flex items-center gap-1'>
+              <MdNotes size='1.7em' />
               <input
                 class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-zinc-200"
                 type="text"
@@ -182,8 +189,9 @@ function Dashboard() {
                 }}
               />
             </div>
-            <div className='mt-5'>
-              <p className="font-medium text-gray-400 tracking-wider text-center text-sm">Type :
+            <div className='md:mt-5 flex items-center gap-1'>
+              <RiContractUpDownLine size='1.7em' />
+              <p className="font-medium text-gray-300 tracking-wider text-center text-sm">Type :
                 <select value={type}
                   onChange={(e) => {
                     setType(e.target.value)
@@ -195,7 +203,7 @@ function Dashboard() {
                 </select>
               </p>
             </div>
-            <button onClick={addTransaction} className='bg-zinc-400 text-black py-2 px-10 mx-auto block mt-10 font-semibold rounded-xl hover:bg-zinc-300'>Add Transaction</button>
+            <button onClick={addTransaction} className='bg-zinc-400 text-black py-1 md:py-2 px-5 md:px-10 text-sm md:text-base mx-auto block md:mt-10 font-semibold rounded-xl hover:bg-zinc-300'>Add Transaction</button>
           </div>
         </div>
       </div>

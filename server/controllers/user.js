@@ -1,4 +1,6 @@
 import User from "../models/User.js";
+import bcryptjs from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const postSignup = async (req, res) => {
     const { fullName, email, password, dob } = req.body;
@@ -22,16 +24,16 @@ const postSignup = async (req, res) => {
             data: null
         })
     }
-    const user = new User({ fullName, email, password, dob: new Date(dob) });
-
+    const hashedPassword = await bcryptjs.hashSync(password, 10) 
+    const user = new User({ fullName, email, password: hashedPassword, dob: new Date(dob) });
 
     try {
-        const newUser = await user.save();
+        await user.save();
 
         res.json({
             success: true,
             message: `User signup successful`,
-            data: newUser
+            data: null
         })
     }
     catch (e) {
@@ -65,8 +67,9 @@ const postLogin = async (req, res) => {
                 data: null
             })
         }
+        const validPassword = bcryptjs.compareSync(password, user.password)
 
-        if (!(user.password == password)) {
+        if (!(validPassword)) {
             return res.json({
                 success: false,
                 message: "Invalid password.",
@@ -74,13 +77,23 @@ const postLogin = async (req, res) => {
             })
         }
 
-        if (user) {
-            return res.json({
-                success: true,
-                message: "User Login successful",
-                data: user
-            })
-        }
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
+
+        const {password: pass, ...rest} = user._doc
+
+        res.cookie("access_token", token, {httpOnly: true}).status(200).json({
+            success: true,
+            message: "User Login successful",
+            data: rest
+        })
+
+        // if (user) {
+        //     return res.json({
+        //         success: true,
+        //         message: "User Login successful",
+        //         data: user
+        //     })
+        // }
     } catch (e) {
         res.json({
             success: false,

@@ -1,9 +1,11 @@
 import React, { useContext, useRef, useState } from 'react'
-import { RxCross1 } from "react-icons/rx";
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { MyContext } from '../components/MyContext';
 import { useNavigate } from 'react-router-dom';
+import { RxCross1 } from "react-icons/rx";
+import { FaEye, FaEyeSlash, FaUserLock, FaUser } from "react-icons/fa";
+import { MdMail, MdDateRange } from "react-icons/md";
 
 function Login({ onClose }) {
     const modalRef = useRef();
@@ -23,6 +25,7 @@ function Login({ onClose }) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPass, setShowPass] = useState(true);
     const login = async () => {
         if (!email) {
             toast.error('Invalid email address');
@@ -54,6 +57,7 @@ function Login({ onClose }) {
     const [Email, setEmails] = useState('');
     const [Password, setPasswords] = useState('');
     const [dob, setDob] = useState('');
+    const [showPasss, setShowPasss] = useState(true);
 
     const signUp = async () => {
         if (!(fullName && Email && Password && dob)) {
@@ -67,13 +71,14 @@ function Login({ onClose }) {
             }
             else if (response.data.success) {
                 toast.success(response.data.message);
-                setUser(response.data.data);
-                localStorage.setItem('user', JSON.stringify(response.data.data));
+                handleSetActiveComponent('Login');
+                // setUser(response.data.data);
+                // localStorage.setItem('user', JSON.stringify(response.data.data));
 
-                setTimeout(() => {
-                    onClose();
-                    window.location.href = `/dashboard`
-                }, 2000)
+                // setTimeout(() => {
+                //     onClose();
+                //     window.location.href = `/dashboard`
+                // }, 2000)
             }
         }
     }
@@ -87,11 +92,12 @@ function Login({ onClose }) {
                         <div className='w-80'>
                             <h1 className='text-center font-semibold text-4xl leading-none tracking-tighter text-gray-300'>Log in</h1>
                             <p className='text-sm text-center mt-2'>Don't have an account? <span className='text-gray-400 cursor-pointer font-semibold' onClick={() => handleSetActiveComponent('SignUp')}>SignUp</span></p>
-                            <form class="mt-4 text-gray-400">
-                                <div class="space-y-4">
-                                    <div className='w-full'>
+                            <form class="mt-6 text-gray-400">
+                                <div class="space-y-5">
+                                    <div className='w-full flex items-center gap-1'>
+                                        <MdMail size='1.7em' />
                                         <input
-                                            class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
+                                            class="ms-1 p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
                                             type="email"
                                             placeholder="Email"
                                             value={email}
@@ -100,41 +106,20 @@ function Login({ onClose }) {
                                             }}
                                         />
                                     </div>
-                                    <div className='w-full'>
+                                    <div className='w-full flex items-center relative gap-1'>
+                                        <FaUserLock size='1.7em' />
                                         <input
                                             class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
-                                            type="password"
+                                            type={`${showPass ? 'password' : 'text'}`}
                                             placeholder="Password"
                                             value={password}
                                             onChange={(e) => {
                                                 setPassword(e.target.value)
                                             }}
                                         />
+                                        {showPass ? <FaEye onClick={() => setShowPass(false)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' /> : <FaEyeSlash onClick={() => setShowPass(true)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' />
+                                        }
                                     </div>
-                                    {/* <div>
-                                        <label class="text-base font-medium ">Email address :</label>
-                                        <input
-                                            class="mt-2 h-10 w-full rounded-lg border text-gray-300 border-zinc-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:border-green-700"
-                                            type="email"
-                                            placeholder="email@example.com"
-                                            value={email}
-                                            onChange={(e) => {
-                                                setEmail(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label class="text-base font-medium ">Password :</label>
-                                        <input
-                                            class="mt-2 h-10 w-full rounded-lg border text-gray-300 border-zinc-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:border-green-700"
-                                            type="password"
-                                            placeholder="******"
-                                            value={password}
-                                            onChange={(e) => {
-                                                setPassword(e.target.value)
-                                            }}
-                                        />
-                                    </div> */}
                                     <div className='flex justify-center'>
                                         <button onClick={login}
                                             type="button"
@@ -148,9 +133,10 @@ function Login({ onClose }) {
                         <div className='w-80'>
                             <h1 className='text-center font-semibold text-4xl leading-none tracking-tighter text-gray-300'>Sign Up</h1>
                             <p className='text-sm text-center mt-2'>Already have an account? <span className='text-gray-400 cursor-pointer font-semibold' onClick={() => handleSetActiveComponent('Login')}>Login</span></p>
-                            <form class="mt-4 text-gray-400">
-                                <div class="space-y-4">
-                                <div className='w-full'>
+                            <form class="mt-5 text-gray-400">
+                                <div class="space-y-5">
+                                    <div className='w-full flex items-center gap-2'>
+                                        <FaUser size='1.7em' />
                                         <input
                                             class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
                                             type="text"
@@ -161,7 +147,8 @@ function Login({ onClose }) {
                                             }}
                                         />
                                     </div>
-                                    <div className='w-full'>
+                                    <div className='w-full flex items-center gap-2'>
+                                        <MdMail size='1.7em' />
                                         <input
                                             class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
                                             type='email'
@@ -172,81 +159,33 @@ function Login({ onClose }) {
                                             }}
                                         />
                                     </div>
-                                    <div className='w-full'>
+                                    <div className='w-full relative flex items-center gap-2'>
+                                        <FaUserLock size='1.7em' />
                                         <input
                                             class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
-                                            type="password"
+                                            type={`${showPasss ? 'password' : 'text'}`}
                                             placeholder="Password"
                                             value={Password}
                                             onChange={(e) => {
                                                 setPasswords(e.target.value)
                                             }}
                                         />
+                                        {showPasss ? <FaEye onClick={() => setShowPasss(false)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' /> : <FaEyeSlash onClick={() => setShowPasss(true)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' />
+                                        }
                                     </div>
-                                    <div className='w-full'>
-                                    <p className="font-medium text-gray-300 tracking-wider text-sm">Date of Birth :
-                                        <input
-                                            class="pb-1 pt-2 px-2 border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
-                                            type="date"
-                                            value={dob}
-                                            onChange={(e) => {
-                                                setDob(e.target.value)
-                                            }}
-                                        />
+                                    <div className='w-full flex items-center gap-2'>
+                                        <MdDateRange size='1.7em' />
+                                        <p className="font-medium text-gray-300 tracking-wider text-sm">Date of Birth :
+                                            <input
+                                                class="pb-1 pt-2 px-2 border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
+                                                type="date"
+                                                value={dob}
+                                                onChange={(e) => {
+                                                    setDob(e.target.value)
+                                                }}
+                                            />
                                         </p>
                                     </div>
-                                    {/* <div>
-                                        <label class="text-base font-medium ">Full Name :</label>
-                                        <input
-                                            class="mt-2 h-10 w-full rounded-lg border text-gray-300 border-zinc-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:border-green-700"
-                                            type="text"
-                                            placeholder="elon musk"
-                                            value={fullName}
-                                            onChange={(e) => {
-                                                setFullName(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label class="text-base font-medium ">Email address :</label>
-                                        <input
-                                            class="mt-2 h-10 w-full rounded-lg border text-gray-300 border-zinc-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:border-green-700"
-                                            type='email'
-                                            placeholder="email@example.com"
-                                            value={Email}
-                                            onChange={(e) => {
-                                                setEmails(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label class="text-base font-medium ">
-                                            Password :
-                                        </label>
-                                        <input
-                                            class="mt-2 h-10 w-full rounded-lg border text-gray-300 border-zinc-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:border-green-700"
-                                            type="password"
-                                            placeholder="******"
-                                            value={Password}
-                                            onChange={(e) => {
-                                                setPasswords(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label class="text-base font-medium ">
-                                            Date of Birth :
-                                        </label>
-                                        <input
-                                            class="mt-2 h-10 w-full rounded-lg border text-gray-300 border-zinc-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:border-green-700"
-                                            type="date"
-                                            placeholder="******"
-                                            value={dob}
-                                            onChange={(e) => {
-                                                setDob(e.target.value)
-                                            }}
-                                        />
-                                    </div> */}
                                     <div className='flex justify-center'>
                                         <button onClick={signUp}
                                             type="button"
