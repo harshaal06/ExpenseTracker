@@ -22,7 +22,7 @@ function Home() {
     const navigate = useNavigate();
     
     const loadUser = async () => {
-        toast.loading('Please wait 50 seconds for server start.');
+        // toast.loading('Please wait 50 seconds for server start.');
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/health`);
 
         toast.dismiss();
