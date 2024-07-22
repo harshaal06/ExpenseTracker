@@ -87,6 +87,7 @@ function Dashboard() {
       setAmount('')
       setType('')
       setCategory('')
+      setDescription('')
 
       loadTransactions()
     }
