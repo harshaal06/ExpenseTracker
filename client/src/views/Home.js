@@ -73,15 +73,15 @@ function Home() {
 
             </div>
             <div className='absolute md:mt-10 top-1/2 left-1/2 w-4/5 -translate-x-[50%] -translate-y-[50%] text-center'>
-                <motion.h1 variants={motionAni(0.2)} initial="hidden" animate='visible' className='text-5xl md:text-[75px] leading-none tracking-tighter font-semibold text-blck'>Track, manage, save, thrive</motion.h1>
-                <motion.h2 variants={motionAni(0.4)} initial="hidden" animate='visible' className='mt-2 text-center opacity-85 text-xl text-[27px] font-semibold leading-6 tracking-normal text-black'>Transform your financial habits<br />with ExpenseEase intuitive expense tracker.</motion.h2>
-                <motion.button variants={motionAni(0.5)} initial="hidden" animate='visible' className='mt-6 border-2 border-green-700 text-zinc-300 py-2 px-5 font-semibold rounded-lg hover:bg-[#343942]' 
+                <motion.h1 variants={motionAni(0.3)} initial="hidden" animate='visible' className='text-5xl md:text-[75px] leading-none tracking-tighter font-semibold text-blck'>Track, manage, save, thrive</motion.h1>
+                <motion.h2 variants={motionAni(0.5)} initial="hidden" animate='visible' className='mt-2 text-center opacity-85 text-xl text-[27px] font-semibold leading-6 tracking-normal text-black'>Transform your financial habits<br />with ExpenseEase intuitive expense tracker.</motion.h2>
+                <motion.button variants={motionAni(0.6)} initial="hidden" animate='visible' className='mt-6 border-2 border-green-700 text-zinc-300 py-2 px-5 font-semibold rounded-lg hover:bg-[#343942]' 
                     onClick={() => !user ? setShowLogin(true) : navigate('/dashboard')}>Connect with ExpenseEase <GrFormNextLink className='inline' size="1.5em"/>
                 </motion.button>
-                <div className='relative mt-5 md:mt-2 mx-auto md:w-2/3'>
+                <motion.div variants={motionAni(0.7)} initial="hidden" animate='visible' className='relative mt-5 md:mt-2 mx-auto md:w-2/3'>
                     <img src={MainImg} className='md:w-11/12'/>
                     <img src={MainImgS} className='w-[22%] absolute end-0 md:end-3 top-16 md:top-24 rounded-xl'/>
-                </div>
+                </motion.div>
             </div>
             {showLogin && <Login onClose={() => { setShowLogin(false) }} />}
         </div>
