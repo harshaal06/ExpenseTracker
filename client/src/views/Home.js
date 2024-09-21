@@ -36,9 +36,9 @@ function Home() {
         const data = JSON.parse(localStorage.getItem('user'));
         setUser(data);
     }
-    // useEffect(() => {
-    //     loadUser();
-    // }, [])
+     useEffect(() => {
+         loadUser();
+     }, [])
 
     const [showLogin, setShowLogin] = useState(false);
 
