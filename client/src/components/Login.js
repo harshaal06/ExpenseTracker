@@ -36,7 +36,7 @@ function Login({ onClose }) {
             return;
         }
         else {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { email, password })
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { email, password }, { withCredentials: true })
             if (!response.data.success) {
                 toast.error(response.data.message);
             }

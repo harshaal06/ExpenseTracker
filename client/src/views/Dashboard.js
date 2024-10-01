@@ -30,7 +30,7 @@ function Dashboard() {
       return;
     }
     toast.loading('Loading transactions...')
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/transactions?userId=${user._id}`)
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/transactions?userId=${user._id}`, { withCredentials: true })
 
     const allTransactions = response.data.data
     toast.dismiss()
@@ -76,22 +76,45 @@ function Dashboard() {
       description,
       category,
       user: user._id
-    })
+    }, { withCredentials: true })
     if (!response.data.success) {
       toast.error(response.data.message);
     }
     else {
       toast.success(response.data.message)
-
       setTitle('')
       setAmount('')
       setType('')
       setCategory('')
       setDescription('')
-
-      loadTransactions()
+      setTimeout(() => {
+        loadTransactions()
+      }, 1000)
     }
   }
+
+  const handleLogout = async () => {
+    setUser([]);
+    
+    try {
+      
+      localStorage.removeItem('user');
+      
+      document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      
+      await axios.post(`${process.env.REACT_APP_API_URL}/logout`, {}, { withCredentials: true });
+    
+      toast.success("User signed out successfully");
+      
+      setTimeout(() => {
+        window.location.href = `/`;
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
 
   return (
     <div className='w-full h-full md:h-screen bg-[#282c34] py-3'>
@@ -129,14 +152,7 @@ function Dashboard() {
         <div className='w-full md:w-2/3 bg-zinc-800 rounded-3xl p-4 text-white'>
           <div className='bg-zinc-900 h-auto md:h-1/3 rounded-3xl flex justify-center items-center'>
             <div className='p-4'><h1 className='text-2xl md:text-5xl text-center'>Hello, {user.fullName}</h1>
-              <button onClick={() => {
-                setUser([]);
-                localStorage.removeItem('user');
-                toast.success("User sign out successfully");
-                setTimeout(() => {
-                  window.location.href = `/`
-                }, 1000);
-              }} className='bg-red-600 text-white py-1 md:py-2 px-5 md:px-10 mx-auto block mt-3 md:mt-5 md:font-semibold text-sm rounded-lg hover:bg-red-500'>Sign Out</button>
+              <button onClick={handleLogout} className='bg-red-600 text-white py-1 md:py-2 px-5 md:px-10 mx-auto block mt-3 md:mt-5 md:font-semibold text-sm rounded-lg hover:bg-red-500'>Sign Out</button>
             </div>
           </div>
           <div className='md:w-2/3 mx-auto p-2 md:p-5 md:mt-6 space-y-4'>

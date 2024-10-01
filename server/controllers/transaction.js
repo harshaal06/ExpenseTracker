@@ -35,7 +35,9 @@ const postTransaction = async (req, res) => {
 const getTransactions = async (req, res) => {
   const { userId } = req.query;
 
-  const user = await User.findById(userId)
+  try {
+
+  const user = await User.findById(userId.trim())
 
   if(!user){
     return res.json({
@@ -52,6 +54,14 @@ const getTransactions = async (req, res) => {
     message: `Transactions fetched successfully`,
     data: transactions
   })
+}
+catch (e) {
+  res.json({
+    success: false,
+    message: e.message,
+    data: null
+  })
+}
 }
 
 const deleteTransaction = async (req, res) => {

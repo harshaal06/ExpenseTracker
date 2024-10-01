@@ -42,6 +42,28 @@ function Home() {
 
     const [showLogin, setShowLogin] = useState(false);
 
+    const handleLogout = async () => {
+        setUser([]);
+        
+        try {
+          
+          localStorage.removeItem('user');
+          
+          document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          
+          await axios.post(`${process.env.REACT_APP_API_URL}/logout`, {}, { withCredentials: true });
+        
+          toast.success("User signed out successfully");
+          
+          setTimeout(() => {
+            window.location.href = `/`;
+          }, 1000);
+          
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
+      };
+
     return (
         <div className='w-full h-screen bg-[#282c34] pt-3'>
             <div className='sticky top-0 opacity-80 flex justify-between items-center px-3 md:px-20 py-4 bg-zinc-900'>
@@ -53,13 +75,7 @@ function Home() {
                                 className='bg-green-600 text-white py-2 px-5 font-semibold rounded-xl hover:bg-green-500'>
                                 Dashboard</button>
                             </Link>
-                            <LuLogOut onClick={() => {
-                                setUser([]);
-                                toast.success("User sign out successfully");
-                                localStorage.removeItem('user');
-                                loadUser();
-                            }
-                            } className='text-red-300 inline ms-4 cursor-pointer' size='2.2em'/>
+                            <LuLogOut onClick={handleLogout} className='text-red-300 inline ms-4 cursor-pointer' size='2.2em'/>
                         </div>
                     )}
                     {!user && (

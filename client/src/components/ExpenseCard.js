@@ -6,13 +6,13 @@ import { ImCross } from "react-icons/im";
 function ExpenseCard({ _id, title, amount, category,description, type, createdAt, loadTransactions }) {
 
     const deleteTransaction = async () => {
-        const response = await axios.delete(`${process.env.REACT_APP_API_URL}/transaction/${_id}`)
+        const response = await axios.delete(`${process.env.REACT_APP_API_URL}/transaction/${_id}`, { withCredentials: true })
     
         toast.success(response.data.message)
 
         setTimeout(() => {
             loadTransactions()
-        }, 1000)
+        }, 500)
       }
     return (
         <div className={`flex justify-between my-3 me-2 border-s-4 ps-2 ${type === "credit" ? "border-green-700": "border-red-700"}`} >

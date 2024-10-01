@@ -24,7 +24,7 @@ const postSignup = async (req, res) => {
             data: null
         })
     }
-    const hashedPassword = await bcryptjs.hashSync(password, 10) 
+    const hashedPassword = await bcryptjs.hashSync(password, 10)
     const user = new User({ fullName, email, password: hashedPassword, dob: new Date(dob) });
 
     try {
@@ -53,54 +53,118 @@ const postLogin = async (req, res) => {
             success: false,
             message: "Email is required",
             data: null
-        })
+        });
     }
+
     try {
         const user = await User.findOne({
             $or: [{ email }]
-        })
+        });
 
         if (!user) {
             return res.json({
                 success: false,
                 message: "Invalid email.",
                 data: null
-            })
+            });
         }
-        const validPassword = bcryptjs.compareSync(password, user.password)
 
-        if (!(validPassword)) {
+        const validPassword = bcryptjs.compareSync(password, user.password);
+
+        if (!validPassword) {
             return res.json({
                 success: false,
                 message: "Invalid password.",
                 data: null
-            })
+            });
         }
 
-        // const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-        // const {password: pass, ...rest} = user._doc
+        // Exclude the password from the user object before sending the response
+        const { password: pass, ...rest } = user._doc;
 
-        // res.cookie("access_token", token, {httpOnly: true}).status(200).json({
-        //     success: true,
-        //     message: "User Login successful",
-        //     data: rest
-        // })
+        // Set the cookie and return a single success response
+        res.cookie("access_token", token, { httpOnly: true }).status(200).json({
+            success: true,
+            message: "User Login successful",
+            data: rest
+        });
 
-        if (user) {
-            return res.json({
-                success: true,
-                message: "User Login successful",
-                data: user
-            })
-        }
+        // No need for the if block, as response has already been sent
     } catch (e) {
-        res.json({
+        return res.status(500).json({
             success: false,
             message: e.message,
             data: null
-        })
+        });
     }
-}
+};
 
-export { postSignup, postLogin }
+const postLogout = async (req, res) => {
+    // Clear the cookie
+    res.clearCookie('access_token', { path: '/' });
+
+    // Respond to confirm logout
+    res.status(200).json({ success: true, message: 'Logged out successfully' });
+};
+
+// const postLogin = async (req, res) => {
+//     const { email, password } = req.body;
+
+//     if (!email) {
+//         return res.json({
+//             success: false,
+//             message: "Email is required",
+//             data: null
+//         })
+//     }
+//     try {
+//         const user = await User.findOne({
+//             $or: [{ email }]
+//         })
+
+//         if (!user) {
+//             return res.json({
+//                 success: false,
+//                 message: "Invalid email.",
+//                 data: null
+//             })
+//         }
+//         const validPassword = bcryptjs.compareSync(password, user.password)
+
+//         if (!(validPassword)) {
+//             return res.json({
+//                 success: false,
+//                 message: "Invalid password.",
+//                 data: null
+//             })
+//         }
+
+//         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
+
+//         const {password: pass, ...rest} = user._doc
+
+//         res.cookie("access_token", token, {httpOnly: true}).status(200).json({
+//             success: true,
+//             message: "User Login successful",
+//             data: rest
+//         })
+
+//         if (user) {
+//             return res.json({
+//                 success: true,
+//                 message: "User Login successful",
+//                 data: user
+//             })
+//         }
+//     } catch (e) {
+//         res.json({
+//             success: false,
+//             message: e.message,
+//             data: null
+//         })
+//     }
+// }
+
+export { postSignup, postLogin, postLogout }
