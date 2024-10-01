@@ -46,15 +46,10 @@ function Home() {
         setUser([]);
         
         try {
-          
           localStorage.removeItem('user');
-          
           document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-          
           await axios.post(`${process.env.REACT_APP_API_URL}/logout`, {}, { withCredentials: true });
-        
           toast.success("User signed out successfully");
-          
           setTimeout(() => {
             window.location.href = `/`;
           }, 1000);
