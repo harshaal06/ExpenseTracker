@@ -6,7 +6,7 @@ export const verifyToken = (req, res, next) => {
     if(!token){
         return res.json({
             success: false,
-            message: "Unauthorized",
+            message: "Unauthorized. Cookies not set.",
             data: null
         })
     }

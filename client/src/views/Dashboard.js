@@ -10,12 +10,13 @@ import { RiMoneyRupeeCircleLine, RiContractUpDownLine } from "react-icons/ri";
 function Dashboard() {
 
   const { user, setUser } = useContext(MyContext);
+  //const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const response = JSON.parse(localStorage.getItem('user'));
+    // const response = JSON.parse(localStorage.getItem('user'));
 
-    if (!response) {
+    if (!user) {
       toast.error("Login First")
       navigate('/')
     }
@@ -27,16 +28,21 @@ function Dashboard() {
 
   const loadTransactions = async () => {
     if (!user._id) {
+      toast.error('Something went wrong.');
       return;
     }
     toast.loading('Loading transactions...')
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/transactions?userId=${user._id}`, { withCredentials: true })
-
-      setTransactions(response.data.data || []);
       toast.dismiss()
+      if(!response.data.success){
+        toast.error(response.data.message);
+      }
+      setTransactions(response.data.data || []);
     } catch (error) {
-      console.error('Failed to fetch transactions:', error);
+      toast.dismiss()
+      toast.error('Failed to fetch transactions:', error);
+      //console.error('Failed to fetch transactions:', error);
       setTransactions([]);
     }
   }
@@ -67,6 +73,7 @@ function Dashboard() {
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [type, setType] = useState('');
+
   const addTransaction = async () => {
     if (!(title && amount && type)) {
       toast.error('All information required.');
@@ -101,7 +108,7 @@ function Dashboard() {
 
     try {
 
-      localStorage.removeItem('user');
+      //localStorage.removeItem('user');
 
       document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 

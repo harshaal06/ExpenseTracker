@@ -6,6 +6,7 @@ import Home from './views/Home';
 import Dashboard from './views/Dashboard';
 import './index.css';
 import { MyContext } from './components/MyContext';
+import axios from 'axios';
 
 const router = createBrowserRouter([
   {
@@ -16,13 +17,34 @@ const router = createBrowserRouter([
     path: '/dashboard',
     element: <Dashboard />,
   },
+  {
+    path: "/:id",
+    element: <Dashboard />,
+  },
 ]);
 
 const App = () => {
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-      setUser(JSON.parse(localStorage.getItem('user')));
+  useEffect(async () => {
+    // if (document.cookie.split('; ').find(row => row.startsWith('access_token='))) {
+    //   const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile`, { withCredentials: true })
+    // setUser(response.data.data);
+    // }
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile`, {
+        withCredentials: true, // Send cookies with the request
+      });
+
+      if (response.data.success) {
+        setUser(response.data.data); // Set user data if token is valid
+      } else {
+        setUser(null); // No valid token or unauthorized
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setUser(null); // Clear user if token is invalid
+    }
   }, [])
 
   return (

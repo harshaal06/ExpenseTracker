@@ -109,62 +109,91 @@ const postLogout = async (req, res) => {
     res.status(200).json({ success: true, message: 'Logged out successfully' });
 };
 
-// const postLogin = async (req, res) => {
-//     const { email, password } = req.body;
+const getProfile = async (req, res) => {
+    const { id } = req.user; // Extract user ID from token
+    
 
-//     if (!email) {
-//         return res.json({
-//             success: false,
-//             message: "Email is required",
-//             data: null
-//         })
-//     }
-//     try {
-//         const user = await User.findOne({
-//             $or: [{ email }]
-//         })
+    try {
+        const user = await User.findById(id).select('-password -updatedAt'); // Exclude password and updatedAt fields
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found',
+                data: null
+            });
+        }
 
-//         if (!user) {
-//             return res.json({
-//                 success: false,
-//                 message: "Invalid email.",
-//                 data: null
-//             })
-//         }
-//         const validPassword = bcryptjs.compareSync(password, user.password)
+        res.status(200).json({
+            success: true,
+            message: 'User data fetched successfully',
+            data: user
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+            data: null
+        });
+    }
+}
 
-//         if (!(validPassword)) {
-//             return res.json({
-//                 success: false,
-//                 message: "Invalid password.",
-//                 data: null
-//             })
-//         }
+    // const postLogin = async (req, res) => {
+    //     const { email, password } = req.body;
 
-//         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
+    //     if (!email) {
+    //         return res.json({
+    //             success: false,
+    //             message: "Email is required",
+    //             data: null
+    //         })
+    //     }
+    //     try {
+    //         const user = await User.findOne({
+    //             $or: [{ email }]
+    //         })
 
-//         const {password: pass, ...rest} = user._doc
+    //         if (!user) {
+    //             return res.json({
+    //                 success: false,
+    //                 message: "Invalid email.",
+    //                 data: null
+    //             })
+    //         }
+    //         const validPassword = bcryptjs.compareSync(password, user.password)
 
-//         res.cookie("access_token", token, {httpOnly: true}).status(200).json({
-//             success: true,
-//             message: "User Login successful",
-//             data: rest
-//         })
+    //         if (!(validPassword)) {
+    //             return res.json({
+    //                 success: false,
+    //                 message: "Invalid password.",
+    //                 data: null
+    //             })
+    //         }
 
-//         if (user) {
-//             return res.json({
-//                 success: true,
-//                 message: "User Login successful",
-//                 data: user
-//             })
-//         }
-//     } catch (e) {
-//         res.json({
-//             success: false,
-//             message: e.message,
-//             data: null
-//         })
-//     }
-// }
+    //         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
 
-export { postSignup, postLogin, postLogout }
+    //         const {password: pass, ...rest} = user._doc
+
+    //         res.cookie("access_token", token, {httpOnly: true}).status(200).json({
+    //             success: true,
+    //             message: "User Login successful",
+    //             data: rest
+    //         })
+
+    //         if (user) {
+    //             return res.json({
+    //                 success: true,
+    //                 message: "User Login successful",
+    //                 data: user
+    //             })
+    //         }
+    //     } catch (e) {
+    //         res.json({
+    //             success: false,
+    //             message: e.message,
+    //             data: null
+    //         })
+    //     }
+    // }
+
+export { postSignup, postLogin, postLogout, getProfile }

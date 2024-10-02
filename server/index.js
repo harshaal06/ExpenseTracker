@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { postLogin, postLogout, postSignup } from './controllers/user.js';
+import { getProfile, postLogin, postLogout, postSignup } from './controllers/user.js';
 import { deleteTransaction, getTransactions, postTransaction } from './controllers/transaction.js';
 import { verifyToken } from './utils/verifyUser.js';
 
@@ -35,6 +35,7 @@ app.get('/health', (req, res) => {
 app.post("/signup", postSignup)
 app.post("/login", postLogin)
 app.post("/logout", postLogout)
+app.get("/profile", verifyToken, getProfile)
 
 app.post("/transaction", verifyToken, postTransaction)
 app.get("/transactions", verifyToken, getTransactions)

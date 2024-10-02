@@ -43,11 +43,12 @@ function Login({ onClose }) {
             else if (response.data.success) {
                 toast.success(response.data.message);
                 setUser(response.data.data);
-                localStorage.setItem('user', JSON.stringify(response.data.data));
+                // localStorage.setItem('user', JSON.stringify(response.data.data));
 
                 setTimeout(() => {
                     onClose();
-                    navigate('/dashboard');
+                    //console.log(response.data.data);
+                    navigate(`/${response.data.data._id}`);
                 }, 1000)
             }
         }
