@@ -95,21 +95,21 @@ function Dashboard() {
 
   const handleLogout = async () => {
     setUser([]);
-    
+
     try {
-      
+
       localStorage.removeItem('user');
-      
+
       document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-      
+
       await axios.post(`${process.env.REACT_APP_API_URL}/logout`, {}, { withCredentials: true });
-    
+
       toast.success("User signed out successfully");
-      
+
       setTimeout(() => {
         window.location.href = `/`;
       }, 1000);
-      
+
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -139,12 +139,31 @@ function Dashboard() {
             <h3 className='text-2xl tracking-normal font-semibold text-zinc-400'>Breakdown</h3>
             <div className='h-[215px] overflow-y-scroll card-box'>
               {
-                transactions.map((transaction) => {
-                  const { _id, title, amount, category, description, type, createdAt } = transaction
+                transactions ? (
+                  transactions.length > 0 ? (
+                    transactions.map((transaction) => {
+                      const { _id, title, amount, category, description, type, createdAt } = transaction;
 
-                  return (
-                    <ExpenseCard key={_id} _id={_id} title={title} amount={amount} category={category} description={description} type={type} createdAt={createdAt} loadTransactions={loadTransactions} />)
-                })
+                      return (
+                        <ExpenseCard
+                          key={_id}
+                          _id={_id}
+                          title={title}
+                          amount={amount}
+                          category={category}
+                          description={description}
+                          type={type}
+                          createdAt={createdAt}
+                          loadTransactions={loadTransactions}
+                        />
+                      );
+                    })
+                  ) : (
+                    <p>No transactions available.</p>
+                  )
+                ) : (
+                  <p>Failed to load transactions. Please try again later.</p>
+                )
               }
             </div>
           </div>
