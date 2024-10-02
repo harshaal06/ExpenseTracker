@@ -30,12 +30,15 @@ function Dashboard() {
       return;
     }
     toast.loading('Loading transactions...')
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/transactions?userId=${user._id}`, { withCredentials: true })
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/transactions?userId=${user._id}`, { withCredentials: true })
 
-    const allTransactions = response.data.data
-    toast.dismiss()
-
-    setTransactions(allTransactions)
+      setTransactions(response.data.data || []);
+      toast.dismiss()
+    } catch (error) {
+      console.error('Failed to fetch transactions:', error);
+      setTransactions([]);
+    }
   }
 
   useEffect(() => {
@@ -139,32 +142,29 @@ function Dashboard() {
             <h3 className='text-2xl tracking-normal font-semibold text-zinc-400'>Breakdown</h3>
             <div className='h-[215px] overflow-y-scroll card-box'>
               {
-                transactions ? (
-                  transactions.length > 0 ? (
-                    transactions.map((transaction) => {
-                      const { _id, title, amount, category, description, type, createdAt } = transaction;
+                transactions && transactions.length > 0 ? (
+                  transactions.map((transaction) => {
+                    const { _id, title, amount, category, description, type, createdAt } = transaction;
 
-                      return (
-                        <ExpenseCard
-                          key={_id}
-                          _id={_id}
-                          title={title}
-                          amount={amount}
-                          category={category}
-                          description={description}
-                          type={type}
-                          createdAt={createdAt}
-                          loadTransactions={loadTransactions}
-                        />
-                      );
-                    })
-                  ) : (
-                    <p>No transactions available.</p>
-                  )
+                    return (
+                      <ExpenseCard
+                        key={_id}
+                        _id={_id}
+                        title={title}
+                        amount={amount}
+                        category={category}
+                        description={description}
+                        type={type}
+                        createdAt={createdAt}
+                        loadTransactions={loadTransactions}
+                      />
+                    );
+                  })
                 ) : (
-                  <p>Failed to load transactions. Please try again later.</p>
+                  <p>No transactions available.</p> // Show message when there are no transactions
                 )
               }
+
             </div>
           </div>
         </div>
