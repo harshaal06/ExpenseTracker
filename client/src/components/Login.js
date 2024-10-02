@@ -48,7 +48,7 @@ function Login({ onClose }) {
                 setTimeout(() => {
                     onClose();
                     //console.log(response.data.data);
-                    navigate(`/${response.data.data._id}`);
+                    navigate(`/dashboar/${response.data.data._id}`);
                 }, 1000)
             }
         }
