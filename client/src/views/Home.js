@@ -69,7 +69,7 @@ function Home() {
                 <div>
                     {user && (
                         <div>
-                            <Link to={`/${user._id}`}><button
+                            <Link to={`/dashboard/${user._id}`}><button
                                 className='bg-green-600 text-white py-2 px-5 font-semibold rounded-xl hover:bg-green-500'>
                                 Dashboard</button>
                             </Link>
@@ -90,7 +90,7 @@ function Home() {
                 <motion.h1 variants={motionAni(0.3)} initial="hidden" animate='visible' className='text-5xl md:text-[75px] leading-none tracking-tighter font-semibold text-blck'>Track, manage, save, thrive</motion.h1>
                 <motion.h2 variants={motionAni(0.5)} initial="hidden" animate='visible' className='mt-2 text-center opacity-85 text-xl text-[27px] font-semibold leading-6 tracking-normal text-black'>Transform your financial habits<br />with ExpenseEase intuitive expense tracker.</motion.h2>
                 <motion.button variants={motionAni(0.6)} initial="hidden" animate='visible' className='mt-6 border-2 border-green-700 text-zinc-300 py-2 px-5 font-semibold rounded-lg hover:bg-[#343942]'
-                    onClick={() => !user ? setShowLogin(true) : navigate(`/${user._id}`)}>Connect with ExpenseEase <GrFormNextLink className='inline' size="1.5em" />
+                    onClick={() => !user ? setShowLogin(true) : navigate(`/dashboard/${user._id}`)}>Connect with ExpenseEase <GrFormNextLink className='inline' size="1.5em" />
                 </motion.button>
                 <motion.div variants={motionAni(0.7)} initial="hidden" animate='visible' className='relative mt-5 md:mt-2 mx-auto md:w-2/3'>
                     <img src={MainImg} className='md:w-11/12' />

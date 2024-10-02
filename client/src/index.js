@@ -7,6 +7,7 @@ import Dashboard from './views/Dashboard';
 import './index.css';
 import { MyContext } from './components/MyContext';
 import axios from 'axios';
+import ShowError from './views/ShowError';
 
 const router = createBrowserRouter([
   {
@@ -14,12 +15,12 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: '/dashboard',
+    path: "/dashboard/:id",
     element: <Dashboard />,
   },
   {
-    path: "/:id",
-    element: <Dashboard />,
+    path: "/*",
+    element: <ShowError />,
   },
 ]);
 
