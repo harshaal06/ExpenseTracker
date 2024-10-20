@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { MyContext } from '../components/MyContext';
@@ -9,190 +9,188 @@ import { MdMail, MdDateRange } from "react-icons/md";
 
 function Login({ onClose }) {
     const modalRef = useRef();
-    const closeModal = (e) => {
-        if (modalRef.current === e.target) {
-            onClose();
-        }
-    }
-
     const { setUser } = useContext(MyContext);
     const navigate = useNavigate();
 
     const [activeComponent, setActiveComponent] = useState("Login");
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(true);
+    const [fullName, setFullName] = useState('');
+    const [signupEmail, setSignupEmail] = useState('');
+    const [signupPassword, setSignupPassword] = useState('');
+    const [dob, setDob] = useState('');
+    const [showSignupPassword, setShowSignupPassword] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const closeModal = (e) => {
+        if (modalRef.current === e.target) {
+            onClose();
+        }
+    };
+
     const handleSetActiveComponent = (component) => {
         setActiveComponent(component);
     };
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPass, setShowPass] = useState(true);
-    const login = async () => {
-        if (!email) {
-            toast.error('Invalid email address');
+    const handleLoginSubmit = async (e) => {
+        e.preventDefault(); // Prevent form from refreshing the page
+
+        if (!email || !password) {
+            toast.error('Invalid email or password');
             return;
         }
-        if (!password) {
-            toast.error('Invalid Password');
-            return;
-        }
-        else {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { email, password }, { withCredentials: true })
+
+        setIsLoading(true);
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { email, password }, { withCredentials: true });
+
             if (!response.data.success) {
                 toast.error(response.data.message);
-            }
-            else if (response.data.success) {
+            } else {
                 toast.success(response.data.message);
                 setUser(response.data.data);
-                // localStorage.setItem('user', JSON.stringify(response.data.data));
-
                 setTimeout(() => {
                     onClose();
-                    //console.log(response.data.data);
                     navigate(`/dashboard/${response.data.data._id}`);
-                }, 1000)
+                }, 1000);
             }
+        } catch (error) {
+            console.error('Login failed:', error);
+            toast.error('Login failed. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
-    }
+    };
 
-    const [fullName, setFullName] = useState('');
-    const [Email, setEmails] = useState('');
-    const [Password, setPasswords] = useState('');
-    const [dob, setDob] = useState('');
-    const [showPasss, setShowPasss] = useState(true);
+    const handleSignUpSubmit = async (e) => {
+        e.preventDefault(); // Prevent form from refreshing the page
 
-    const signUp = async () => {
-        if (!(fullName && Email && Password && dob)) {
-            toast.error('All information required.');
+        if (!(fullName && signupEmail && signupPassword && dob)) {
+            toast.error('All information is required.');
             return;
         }
-        else {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/signup`, { fullName, email: Email, password: Password, dob })
+
+        setIsLoading(true);
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/signup`, { fullName, email: signupEmail, password: signupPassword, dob });
+
             if (!response.data.success) {
                 toast.error(response.data.message);
-            }
-            else if (response.data.success) {
+            } else {
                 toast.success(response.data.message);
                 handleSetActiveComponent('Login');
-                // setUser(response.data.data);
-                // localStorage.setItem('user', JSON.stringify(response.data.data));
-
-                // setTimeout(() => {
-                //     onClose();
-                //     window.location.href = `/dashboard`
-                // }, 2000)
             }
+        } catch (error) {
+            console.error('Signup failed:', error);
+            toast.error('Signup failed. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div ref={modalRef} onClick={closeModal} className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center'>
             <div className='flex flex-col gap-3 -mt-8'>
                 <button onClick={onClose} className='place-self-end'><RxCross1 className='text-white' size={30} /></button>
                 <div className='w-[340px] md:w-96 bg-zinc-900 py-5 px-7 rounded-lg border border-green-700 text-zinc-500'>
-                    {activeComponent === "Login" && (
+
+                    {activeComponent === "Login" ? (
                         <div>
                             <h1 className='text-center font-semibold text-4xl leading-none tracking-tighter text-gray-300'>Log in</h1>
-                            <p className='text-sm text-center mt-2'>Don't have an account? <span className='text-gray-400 cursor-pointer font-semibold' onClick={() => handleSetActiveComponent('SignUp')}>SignUp</span></p>
-                            <form class="mt-6 text-gray-400">
-                                <div class="space-y-5">
+                            <p className='text-sm text-center mt-2'>
+                                Don't have an account? 
+                                <span className='text-gray-400 cursor-pointer font-semibold' onClick={() => handleSetActiveComponent('SignUp')}> Sign Up</span>
+                            </p>
+                            <form onSubmit={handleLoginSubmit} className="mt-6 text-gray-400">
+                                <div className="space-y-5">
                                     <div className='w-full flex items-center gap-1'>
                                         <MdMail size='1.7em' />
                                         <input
-                                            class="ms-1 p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
+                                            className="ms-1 p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
                                             type="email"
                                             placeholder="Email"
                                             value={email}
-                                            onChange={(e) => {
-                                                setEmail(e.target.value)
-                                            }}
+                                            onChange={(e) => setEmail(e.target.value)}
                                         />
                                     </div>
                                     <div className='w-full flex items-center relative gap-1'>
                                         <FaUserLock size='1.7em' />
                                         <input
-                                            class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
-                                            type={`${showPass ? 'password' : 'text'}`}
+                                            className="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
+                                            type={showPassword ? 'password' : 'text'}
                                             placeholder="Password"
                                             value={password}
-                                            onChange={(e) => {
-                                                setPassword(e.target.value)
-                                            }}
+                                            onChange={(e) => setPassword(e.target.value)}
                                         />
-                                        {showPass ? <FaEye onClick={() => setShowPass(false)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' /> : <FaEyeSlash onClick={() => setShowPass(true)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' />
+                                        {showPassword ? 
+                                            <FaEye onClick={() => setShowPassword(false)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' /> : 
+                                            <FaEyeSlash onClick={() => setShowPassword(true)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' />
                                         }
                                     </div>
                                     <div className='flex justify-center'>
-                                        <button onClick={login}
-                                            type="button"
-                                            className='bg-green-600 mt-8 text-white py-2 px-8 font-semibold rounded-lg hover:bg-green-500'>Login</button>
+                                        <button disabled={isLoading} type="submit" className='bg-green-600 mt-8 text-white py-2 px-8 font-semibold rounded-lg hover:bg-green-500'>
+                                            {isLoading ? 'Logging in...' : 'Login'}
+                                        </button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                    )}
-                    {activeComponent === "SignUp" && (
+                    ) : (
                         <div>
                             <h1 className='text-center font-semibold text-4xl leading-none tracking-tighter text-gray-300'>Sign Up</h1>
-                            <p className='text-sm text-center mt-2'>Already have an account? <span className='text-gray-400 cursor-pointer font-semibold' onClick={() => handleSetActiveComponent('Login')}>Login</span></p>
-                            <form class="mt-5 text-gray-400">
-                                <div class="space-y-5">
+                            <p className='text-sm text-center mt-2'>
+                                Already have an account? 
+                                <span className='text-gray-400 cursor-pointer font-semibold' onClick={() => handleSetActiveComponent('Login')}> Login</span>
+                            </p>
+                            <form onSubmit={handleSignUpSubmit} className="mt-5 text-gray-400">
+                                <div className="space-y-5">
                                     <div className='w-full flex items-center gap-2'>
                                         <FaUser size='1.7em' />
                                         <input
-                                            class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
+                                            className="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
                                             type="text"
                                             placeholder="Full Name"
                                             value={fullName}
-                                            onChange={(e) => {
-                                                setFullName(e.target.value)
-                                            }}
+                                            onChange={(e) => setFullName(e.target.value)}
                                         />
                                     </div>
                                     <div className='w-full flex items-center gap-2'>
                                         <MdMail size='1.7em' />
                                         <input
-                                            class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
+                                            className="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
                                             type='email'
                                             placeholder="Email"
-                                            value={Email}
-                                            onChange={(e) => {
-                                                setEmails(e.target.value)
-                                            }}
+                                            value={signupEmail}
+                                            onChange={(e) => setSignupEmail(e.target.value)}
                                         />
                                     </div>
                                     <div className='w-full relative flex items-center gap-2'>
                                         <FaUserLock size='1.7em' />
                                         <input
-                                            class="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
-                                            type={`${showPasss ? 'password' : 'text'}`}
+                                            className="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
+                                            type={showSignupPassword ? 'password' : 'text'}
                                             placeholder="Password"
-                                            value={Password}
-                                            onChange={(e) => {
-                                                setPasswords(e.target.value)
-                                            }}
+                                            value={signupPassword}
+                                            onChange={(e) => setSignupPassword(e.target.value)}
                                         />
-                                        {showPasss ? <FaEye onClick={() => setShowPasss(false)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' /> : <FaEyeSlash onClick={() => setShowPasss(true)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' />
+                                        {showSignupPassword ? 
+                                            <FaEye onClick={() => setShowSignupPassword(false)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' /> : 
+                                            <FaEyeSlash onClick={() => setShowSignupPassword(true)} className='absolute top-2 end-2 cursor-pointer' size='1.5em' />
                                         }
                                     </div>
                                     <div className='w-full flex items-center gap-2'>
                                         <MdDateRange size='1.7em' />
-                                        <p className="font-medium text-gray-300 tracking-wider text-sm">Date of Birth :
-                                            <input
-                                                class="pb-1 pt-2 px-2 border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
-                                                type="date"
-                                                value={dob}
-                                                onChange={(e) => {
-                                                    setDob(e.target.value)
-                                                }}
-                                            />
-                                        </p>
+                                        <input
+                                            className="p-2 w-full border-b text-gray-300 border-zinc-500 tracking-wider bg-transparent text-sm placeholder:text-gray-400 placeholder:tracking-widest focus:outline-none focus:ring-0 focus:border-zinc-200"
+                                            type='date'
+                                            value={dob}
+                                            onChange={(e) => setDob(e.target.value)}
+                                        />
                                     </div>
                                     <div className='flex justify-center'>
-                                        <button onClick={signUp}
-                                            type="button"
-                                            className='bg-green-600 mt-6 text-white py-2 px-8 font-semibold rounded-lg hover:bg-green-500'
-                                        >
-                                            Sign Up
+                                        <button disabled={isLoading} type="submit" className='bg-green-600 mt-8 text-white py-2 px-8 font-semibold rounded-lg hover:bg-green-500'>
+                                            {isLoading ? 'Signing up...' : 'Sign Up'}
                                         </button>
                                     </div>
                                 </div>
@@ -200,11 +198,9 @@ function Login({ onClose }) {
                         </div>
                     )}
                 </div>
-
             </div>
-
         </div>
-    )
+    );
 }
 
-export default Login
+export default Login;
