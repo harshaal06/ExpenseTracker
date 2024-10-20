@@ -79,19 +79,22 @@ const postLogin = async (req, res) => {
             });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        // Set token expiration to 5 days
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '5d' });
 
         // Exclude the password from the user object before sending the response
         const { password: pass, ...rest } = user._doc;
 
         // Set the cookie and return a single success response
-        res.cookie("access_token", token, { httpOnly: true }).status(200).json({
+        res.cookie("access_token", token, { 
+            httpOnly: true, 
+            maxAge: 5 * 24 * 60 * 60 * 1000 // 5 days in milliseconds
+        }).status(200).json({
             success: true,
             message: "User Login successful",
             data: rest
         });
 
-        // No need for the if block, as response has already been sent
     } catch (e) {
         return res.status(500).json({
             success: false,
@@ -100,6 +103,7 @@ const postLogin = async (req, res) => {
         });
     }
 };
+
 
 const postLogout = async (req, res) => {
     // Clear the cookie
