@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 
 const postSignup = async (req, res) => {
     const { fullName, email, password, dob } = req.body;
@@ -29,6 +30,40 @@ const postSignup = async (req, res) => {
 
     try {
         await user.save();
+
+        // Set up NodeMailer
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail', // You can use any email service
+            auth: {
+                user: process.env.EMAIL_ADDRESS, // Your email
+                pass: process.env.PASSWORD // Your email password or an app password
+            }
+        });
+
+        const mailOptions = {
+            from: `"ExpenseEase" <${process.env.EMAIL_ADDRESS}>`, // sender address
+            to: email, // recipient email address
+            subject: 'Welcome to ExpenseEase - Your Smart Expense Tracker!', // Subject line
+            text: `Hi ${fullName},
+        
+        Welcome to ExpenseEase!
+        
+        We’re excited to have you on board. With ExpenseEase, managing your expenses has never been easier. Track your spending, monitor your budgets, and stay on top of your finances, all in one place.
+        
+        If you have any questions or need support, feel free to reach out. We’re here to help you get the most out of our service.
+        
+        Best Regards,
+        The ExpenseEase Team`, // plain text body
+            html: `<p>Hi ${fullName},</p>
+                   <p>Welcome to <strong>ExpenseEase</strong>!</p>
+                   <p>We’re excited to have you on board. With ExpenseEase, managing your expenses has never been easier. Track your spending, monitor your budgets, and stay on top of your finances, all in one place.</p>
+                   <p>If you have any questions or need support, feel free to reach out. We’re here to help you get the most out of our service.</p>
+                   <p>Best Regards,<br>The ExpenseEase Team</p>` // html body
+        };
+
+
+        // Send the email
+        await transporter.sendMail(mailOptions);
 
         res.json({
             success: true,
@@ -86,8 +121,8 @@ const postLogin = async (req, res) => {
         const { password: pass, ...rest } = user._doc;
 
         // Set the cookie and return a single success response
-        res.cookie("access_token", token, { 
-            httpOnly: true, 
+        res.cookie("access_token", token, {
+            httpOnly: true,
             maxAge: 5 * 24 * 60 * 60 * 1000 // 5 days in milliseconds
         }).status(200).json({
             success: true,
@@ -115,11 +150,11 @@ const postLogout = async (req, res) => {
 
 const getProfile = async (req, res) => {
     const { id } = req.user; // Extract user ID from token
-    
+
 
     try {
         const user = await User.findById(id).select('-password -updatedAt'); // Exclude password and updatedAt fields
-        
+
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -142,62 +177,62 @@ const getProfile = async (req, res) => {
     }
 }
 
-    // const postLogin = async (req, res) => {
-    //     const { email, password } = req.body;
+// const postLogin = async (req, res) => {
+//     const { email, password } = req.body;
 
-    //     if (!email) {
-    //         return res.json({
-    //             success: false,
-    //             message: "Email is required",
-    //             data: null
-    //         })
-    //     }
-    //     try {
-    //         const user = await User.findOne({
-    //             $or: [{ email }]
-    //         })
+//     if (!email) {
+//         return res.json({
+//             success: false,
+//             message: "Email is required",
+//             data: null
+//         })
+//     }
+//     try {
+//         const user = await User.findOne({
+//             $or: [{ email }]
+//         })
 
-    //         if (!user) {
-    //             return res.json({
-    //                 success: false,
-    //                 message: "Invalid email.",
-    //                 data: null
-    //             })
-    //         }
-    //         const validPassword = bcryptjs.compareSync(password, user.password)
+//         if (!user) {
+//             return res.json({
+//                 success: false,
+//                 message: "Invalid email.",
+//                 data: null
+//             })
+//         }
+//         const validPassword = bcryptjs.compareSync(password, user.password)
 
-    //         if (!(validPassword)) {
-    //             return res.json({
-    //                 success: false,
-    //                 message: "Invalid password.",
-    //                 data: null
-    //             })
-    //         }
+//         if (!(validPassword)) {
+//             return res.json({
+//                 success: false,
+//                 message: "Invalid password.",
+//                 data: null
+//             })
+//         }
 
-    //         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
+//         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
 
-    //         const {password: pass, ...rest} = user._doc
+//         const {password: pass, ...rest} = user._doc
 
-    //         res.cookie("access_token", token, {httpOnly: true}).status(200).json({
-    //             success: true,
-    //             message: "User Login successful",
-    //             data: rest
-    //         })
+//         res.cookie("access_token", token, {httpOnly: true}).status(200).json({
+//             success: true,
+//             message: "User Login successful",
+//             data: rest
+//         })
 
-    //         if (user) {
-    //             return res.json({
-    //                 success: true,
-    //                 message: "User Login successful",
-    //                 data: user
-    //             })
-    //         }
-    //     } catch (e) {
-    //         res.json({
-    //             success: false,
-    //             message: e.message,
-    //             data: null
-    //         })
-    //     }
-    // }
+//         if (user) {
+//             return res.json({
+//                 success: true,
+//                 message: "User Login successful",
+//                 data: user
+//             })
+//         }
+//     } catch (e) {
+//         res.json({
+//             success: false,
+//             message: e.message,
+//             data: null
+//         })
+//     }
+// }
 
 export { postSignup, postLogin, postLogout, getProfile }
