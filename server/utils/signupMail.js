@@ -16,7 +16,7 @@ function generateEmailTemplate(userName) {
           .container { max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f4f4f4;}
           .header {  padding-top: 10px; text-align: center; }
           .content { padding: 0 20px;}
-          .message { font-size: 1.125em; }
+        //   .message { font-size: 1.125em; }
           .footer { background-color: #f4f4f4; padding: 10px; text-align: center; font-size: 0.8em; }
         </style>
       </head>
