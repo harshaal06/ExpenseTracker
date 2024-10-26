@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import nodemailer from 'nodemailer';
+import { sendMail } from "../utils/signupMail.js";
 
 const postSignup = async (req, res) => {
     const { fullName, email, password, dob } = req.body;
@@ -11,74 +11,49 @@ const postSignup = async (req, res) => {
             success: false,
             message: "All fields are required",
             data: null
-        })
+        });
     }
 
     const existedUser = await User.findOne({
         $or: [{ email }]
-    })
+    });
 
     if (existedUser) {
         return res.json({
             success: false,
             message: "User already registered",
             data: null
-        })
+        });
     }
-    const hashedPassword = await bcryptjs.hashSync(password, 10)
+
+    const hashedPassword = await bcryptjs.hashSync(password, 10);
     const user = new User({ fullName, email, password: hashedPassword, dob: new Date(dob) });
 
     try {
+        
+
+        // If email sent successfully, save the user
         await user.save();
-
-        // Set up NodeMailer
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail', // You can use any email service
-            auth: {
-                user: process.env.EMAIL_ADDRESS, // Your email
-                pass: process.env.PASSWORD // Your email password or an app password
-            }
-        });
-
-        const mailOptions = {
-            from: `"ExpenseEase" <${process.env.EMAIL_ADDRESS}>`, // sender address
-            to: email, // recipient email address
-            subject: 'Welcome to ExpenseEase - Your Smart Expense Tracker!', // Subject line
-            text: `Hi ${fullName},
         
-        Welcome to ExpenseEase!
-        
-        We’re excited to have you on board. With ExpenseEase, managing your expenses has never been easier. Track your spending, monitor your budgets, and stay on top of your finances, all in one place.
-        
-        If you have any questions or need support, feel free to reach out. We’re here to help you get the most out of our service.
-        
-        Best Regards,
-        The ExpenseEase Team`, // plain text body
-            html: `<p>Hi ${fullName},</p>
-                   <p>Welcome to <strong>ExpenseEase</strong>!</p>
-                   <p>We’re excited to have you on board. With ExpenseEase, managing your expenses has never been easier. Track your spending, monitor your budgets, and stay on top of your finances, all in one place.</p>
-                   <p>If you have any questions or need support, feel free to reach out. We’re here to help you get the most out of our service.</p>
-                   <p>Best Regards,<br>The ExpenseEase Team</p>` // html body
-        };
-
-
-        // Send the email
-        await transporter.sendMail(mailOptions);
+        await sendMail({
+            to: email,
+            userName: fullName,
+          });
 
         res.json({
             success: true,
             message: `User signup successful`,
             data: null
-        })
-    }
-    catch (e) {
+        });
+    } catch (e) {
         res.json({
             success: false,
-            message: e.message,
+            message: "Signup failed. " + e.message,
             data: null
-        })
+        });
     }
-}
+};
+
 
 const postLogin = async (req, res) => {
     const { email, password } = req.body;
