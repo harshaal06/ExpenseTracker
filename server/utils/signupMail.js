@@ -23,7 +23,7 @@ function generateEmailTemplate(userName) {
       <body>
         <div class="container">
           <div class="header">
-            <img src="#" alt="ExpenseEase" style="width: 80px;">
+            <img src="https://ibb.co/JqP6hPr" alt="ExpenseEase" style="width: 80px;">
           </div>
           <div class="content">
             <h1>Hi ${userName},</h1>
