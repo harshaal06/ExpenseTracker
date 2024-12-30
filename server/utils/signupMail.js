@@ -23,7 +23,7 @@ function generateEmailTemplate(userName) {
       <body>
         <div class="container">
           <div class="header">
-            <img src="https://i.ibb.co/MfLwXLP/Black-Blue-Minimalist-Modern-Initial-Font-Logo.png" alt="ExpenseEase" style="width: 80px;">
+            <img src="https://i.ibb.co/MfLwXLP/Black-Blue-Minimalist-Modern-Initial-Font-Logo.png" alt="ExpenseEase" style="width: 70px; mix-blend-mode: multiply;">
           </div>
           <div class="content">
             <h1>Hi ${userName},</h1>
