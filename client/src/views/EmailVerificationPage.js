@@ -48,7 +48,7 @@ const EmailVerificationPage = () => {
   };
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center'>
+    <div className='fixed inset-0 bg-black bg-opacity-45 backdrop-blur-sm flex justify-center items-center'>
       <div className='w-[340px] md:w-96 bg-zinc-900 py-10 px-10 rounded-lg border border-green-700 text-zinc-500'>
         <div>
           <h1 className='text-center font-semibold text-4xl leading-none tracking-tighter text-gray-300'>Verify Your Email!</h1>
