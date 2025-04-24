@@ -1,7 +1,8 @@
 import User from "../models/User.js";
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { sendMail } from "../utils/signupMail.js";
+import { sendWelcomeMail, sendVerificationEmail } from "../utils/signupMail.js";
+import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookies.js";
 
 const postSignup = async (req, res) => {
     const { fullName, email, password, dob } = req.body;
@@ -27,23 +28,43 @@ const postSignup = async (req, res) => {
     }
 
     const hashedPassword = await bcryptjs.hashSync(password, 10);
-    const user = new User({ fullName, email, password: hashedPassword, dob: new Date(dob) });
+
+    //verification token
+    const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const user = new User({
+        fullName,
+        email,
+        password: hashedPassword,
+        dob: new Date(dob),
+        verificationToken,
+        verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours expiration
+    });
 
     try {
-        
-
         // If email sent successfully, save the user
         await user.save();
-        
-        await sendMail({
-            to: email,
-            userName: fullName,
-          });
+
+        await sendVerificationEmail({
+            to: user.email,
+            verificationToken,
+            userName: user.fullName
+        });
+
+        // Generate token and set cookie
+        generateTokenAndSetCookie(res, user._id);
+
+        // await sendMail({
+        //     to: email,
+        //     userName: fullName,
+        //   }); not use
+
+        const { password: pass, ...rest } = user._doc;
 
         res.json({
             success: true,
-            message: `User signup successful`,
-            data: null
+            message: `User created successfully! Please verify your email.`,
+            data: rest
         });
     } catch (e) {
         res.json({
@@ -89,17 +110,15 @@ const postLogin = async (req, res) => {
             });
         }
 
-        // Set token expiration to 5 days
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '5d' });
+        generateTokenAndSetCookie(res, user._id);
+        user.lastLogin = new Date();
+        await user.save();
 
         // Exclude the password from the user object before sending the response
         const { password: pass, ...rest } = user._doc;
 
         // Set the cookie and return a single success response
-        res.cookie("access_token", token, {
-            httpOnly: true,
-            maxAge: 5 * 24 * 60 * 60 * 1000 // 5 days in milliseconds
-        }).status(200).json({
+        res.status(200).json({
             success: true,
             message: "User Login successful",
             data: rest
@@ -110,6 +129,55 @@ const postLogin = async (req, res) => {
             success: false,
             message: e.message,
             data: null
+        });
+    }
+};
+
+const verifyEmail = async (req, res) => {
+    const { code } = req.body;
+
+    try {
+        // Find the user with the provided verification code and check if the code is still valid
+        const user = await User.findOne({
+            verificationToken: code,
+            verificationTokenExpiresAt: { $gt: Date.now() }, // Ensure the token is not expired
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "Verification code is invalid or expired!",
+            });
+        }
+
+        // Update user properties to mark them as verified
+        user.isVerified = true;
+        user.verificationToken = undefined; // Remove verification token
+        user.verificationTokenExpiresAt = undefined; // Remove token expiration date
+        await user.save();
+
+        await sendWelcomeMail({
+            to: user.email,
+            userName: user.fullName,
+        });
+
+        // Respond with success
+        res.status(200).json({
+            success: true,
+            message: "Email verified successfully!",
+            user: {
+                ...user._doc,
+                password: undefined, // Exclude sensitive data
+            },
+        });
+        
+
+    } catch (error) {
+        console.error("Error in email verification:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error in verifying the user!",
+            error: error.message,
         });
     }
 };
@@ -210,4 +278,4 @@ const getProfile = async (req, res) => {
 //     }
 // }
 
-export { postSignup, postLogin, postLogout, getProfile }
+export { postSignup, postLogin, postLogout, getProfile, verifyEmail }

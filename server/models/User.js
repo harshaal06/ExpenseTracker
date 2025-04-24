@@ -18,6 +18,24 @@ const userSchema = new Schema({
         type: Date,
         required: true,
     },
+    lastLogin: {
+        type: Date,
+        default: Date.now
+    },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
+    resetPasswordToken: String,
+    resetPasswordExpiresAt: Date,
+    verificationToken: String,
+    verificationTokenExpiresAt: Date,
+    accountType: {
+        type: String,
+        enum: ['admin', 'user'], // Allowed values
+        default: 'user', // Default account type
+        required: true
+    },
 }, {
     timestamps: true,
 })
