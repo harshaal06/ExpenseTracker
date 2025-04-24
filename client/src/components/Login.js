@@ -73,13 +73,18 @@ function Login({ onClose }) {
 
         setIsLoading(true);
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/signup`, { fullName, email: signupEmail, password: signupPassword, dob });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/signup`, { fullName, email: signupEmail, password: signupPassword, dob }, { withCredentials: true });
 
             if (!response.data.success) {
                 toast.error(response.data.message);
             } else {
                 toast.success(response.data.message);
-                handleSetActiveComponent('Login');
+                setUser(response.data.data);
+                setTimeout(() => {
+                    onClose();
+                    navigate(`/dashboard/${response.data.data._id}`);
+                }, 2000);
+                // handleSetActiveComponent('Login');
             }
         } catch (error) {
             console.error('Signup failed:', error);

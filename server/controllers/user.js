@@ -161,16 +161,14 @@ const verifyEmail = async (req, res) => {
             userName: user.fullName,
         });
 
-        // Respond with success
+        const { password: pass, ...rest } = user._doc;
+
+        // Set the cookie and return a single success response
         res.status(200).json({
             success: true,
             message: "Email verified successfully!",
-            user: {
-                ...user._doc,
-                password: undefined, // Exclude sensitive data
-            },
+            data: rest
         });
-        
 
     } catch (error) {
         console.error("Error in email verification:", error);

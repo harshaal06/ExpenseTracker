@@ -6,6 +6,7 @@ import { MyContext } from '../components/MyContext';
 import { useNavigate } from 'react-router-dom';
 import { MdTitle, MdOutlineCategory, MdNotes, MdHome } from "react-icons/md";
 import { RiMoneyRupeeCircleLine, RiContractUpDownLine } from "react-icons/ri";
+import EmailVerificationPage from './EmailVerificationPage';
 
 function Dashboard() {
   const { user, setUser } = useContext(MyContext);
@@ -26,6 +27,12 @@ function Dashboard() {
       toast.error("Login First");
       navigate('/');
     }
+    // else if (!user.isVerified) {
+    //   setTimeout(() => {
+    //     toast.error("Email not verified");
+    //     navigate(`/verify-email`);
+    //   }, 1000);
+    // }
   }, [user, navigate]);
 
   const loadTransactions = async () => {
@@ -242,6 +249,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
+      {user && !user.isVerified && <EmailVerificationPage />}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import './index.css';
 import { MyContext } from './components/MyContext';
 import axios from 'axios';
 import ShowError from './views/ShowError';
+import EmailVerificationPage from './views/EmailVerificationPage';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/:id",
     element: <Dashboard />,
+  },
+  {
+    path: "/verify-email",
+    element: <EmailVerificationPage />,
   },
   {
     path: "/*",
